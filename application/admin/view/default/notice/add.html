@@ -1,0 +1,89 @@
+{extend name="public/base" /}
+
+{block name="body"}
+<link rel="stylesheet" href="/static/webuploader/webuploader.css">
+<script src="/static/webuploader/webuploader.js"></script>
+    <div class="main-title">
+        <h2>报修</h2>
+    </div>
+    <form action="{:url()}" method="post" class="form-horizontal">
+        <div class="form-item">
+            <label class="item-label">发布者名称<span class="check-tips">（用户名会作为确认信息使用）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="name" value="{$data.name}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">标题<span class="check-tips">（电话号码请注意填写正确）</span></label>
+            <div class="controls">
+                <input type="text" class="text input-large" name="title" value="{$data.title}">
+                <input type="hidden" class="text input-large" name="id" value="{$data.id}">
+            </div>
+        </div>
+        <div class="form-item">
+            <label class="item-label">内容</label>
+            <div class="controls">
+                <!--<input type="text" class="text input-large" name="repassword" value="">-->
+                <textarea name="content" id="" cols="30" class="input-large" rows="10">{$data.content}</textarea>
+            </div>
+        </div>
+
+        <!--dom结构部分-->
+        <div id="uploader-demo">
+            <!--用来存放item-->
+            <div id="fileList" class="uploader-list"></div>
+            <div id="filePicker">选择图片</div>
+            <img id='img_logo' src="{$data.img}">
+            <input type="hidden" class="text input-large" id="img" name="img" value="{$data.img}">
+        </div>
+
+        <div class="form-item">
+            <button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+        </div>
+    </form>
+{/block}
+
+{block name="script"}
+    <script type="text/javascript">
+        //导航高亮
+        highlight_subnav('{:url('User/index')}');
+
+
+        // 初始化Web Uploader
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: '/webuploader/Uploader.swf',
+
+            // 文件接收服务端。
+            server: '{:url('Notice/logo')}',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on( 'uploadSuccess', function( file,response ) {
+
+            var imgFile = response.url
+            // console.log(imgFile);
+            $('#img').val(imgFile)
+            //图片回显
+            $('#img_logo').attr('src',imgFile);
+            $( '#'+file.id ).addClass('upload-state-done');
+        });
+
+    </script>
+{/block}
